@@ -11,9 +11,10 @@ export default function Home() {
     description: ''
   })
   const [todos, setTodos] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const fetchTodos = async () => {
-    const res = await axios('http://localhost:3000/api');
+    const res = await axios('/api');
     setTodos(res.data.todos)
   }
 
@@ -53,6 +54,7 @@ export default function Home() {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true)
     try {
       //api code
 
@@ -65,11 +67,13 @@ export default function Home() {
       })
 
       fetchTodos()
+      setLoading(false)
 
 
     } catch (error) {
       console.log(error)
       toast.error(error.message)
+      setLoading(false)
     }
   }
 
@@ -77,22 +81,21 @@ export default function Home() {
     <>
       <ToastContainer theme="dark" />
 
-      <form onSubmit={onSubmitHandler} className="flex items-start flex-col gap-2 w-[80%] max-w-[600px] mt-24 px-2 mx-auto">
-        <input value={formData.title} onChange={onChangeHandler} type="text" name="title" placeholder="Enter title" className="px-3 py-2 border-2 w-full rounded-md" />
-        <textarea value={formData.description} onChange={onChangeHandler} name="description" placeholder="Enter description" className="px-3 py-2 border-2 w-full rounded-md"></textarea>
+      <form onSubmit={onSubmitHandler} className="flex items-start flex-col gap-2 w-[80%] max-w-[600px] mt-24 mx-auto bg-slate-50 p-6 border border-slate-300 rounded-lg">
+        <h2 className="font-semibold text-center w-full  pb-4">Add your todo list</h2>
+        <input value={formData.title} onChange={onChangeHandler} type="text" name="title" placeholder="Enter title" className="px-3 py-2 border border-slate-500 w-full rounded-md" />
+        <textarea rows={3} value={formData.description} onChange={onChangeHandler} name="description" placeholder="Enter description" className="px-3 py-2 border border-slate-500 w-full rounded-md"></textarea>
 
-        <button type="submit" className="bg-orange-600 py-3 px-11 text-white font-semibold cursor-pointer">Add Todo</button>
+        <button type="submit" className="bg-violet-600 py-3 px-11 text-white font-semibold cursor-pointer rounded-md">{loading ? 'Loading...' : 'Add Todo'}</button>
 
       </form>
 
       {/* table */}
 
 
-
-
       <div className="relative overflow-x-auto mt-24 w-[60%] mx-auto">
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border border-gray-200">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b border-gray-200">
             <tr>
               <th scope="col" className="px-6 py-3">
                 SL
